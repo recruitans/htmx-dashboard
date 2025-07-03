@@ -1,0 +1,23 @@
+@model List<HtmxDashboard.Models.Post>
+
+<div id="posts">
+    @foreach (var post in Model)
+    {
+        @await Html.PartialAsync("_PostCard", post)
+    }
+</div>
+
+<div hx-get="/Post/LoadPosts?page=@ViewBag.NextPage"
+     hx-trigger="intersect once"
+     hx-swap="outerHTML"
+     hx-indicator="#loading-more"
+     class="text-center p-3">
+    <div id="loading-more" class="htmx-indicator">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading more posts...</span>
+        </div>
+    </div>
+    <div class="text-muted">
+        <small>Scroll down to load more...</small>
+    </div>
+</div>

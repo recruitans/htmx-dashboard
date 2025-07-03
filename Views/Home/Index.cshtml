@@ -1,0 +1,270 @@
+@{
+    ViewData["Title"] = "HTMX Performance Test Dashboard";
+}
+
+<div class="min-h-screen">
+    <div class="bg-white dark:bg-gray-800 shadow-sm mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">HTMX Performance Test Dashboard</h1>
+        </div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Post Feed (Infinite Scroll)</h3>
+                    </div>
+                    <div class="p-6" id="post-container">
+                    <div hx-get="/Post/LoadPosts?page=1"
+                         hx-trigger="load"
+                         hx-swap="innerHTML">
+                            <div class="flex justify-center items-center py-12">
+                                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">User Search</h3>
+                    </div>
+                    <div class="p-6">
+                        <input type="text" 
+                               id="user-search-input"
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white" 
+                               placeholder="Search users..."
+                               hx-post="/User/Search"
+                               hx-trigger="keyup changed delay:500ms"
+                               hx-target="#search-results"
+                               hx-indicator="#search-indicator"
+                               name="query">
+                    
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Try searching for:</p>
+                            <div class="mt-2 flex flex-wrap gap-2">
+                                <button type="button" class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors sample-name" data-name="Leanne">Leanne</button>
+                                <button type="button" class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors sample-name" data-name="Ervin">Ervin</button>
+                                <button type="button" class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors sample-name" data-name="Clementine">Clementine</button>
+                                <button type="button" class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors sample-name" data-name="Patricia">Patricia</button>
+                                <button type="button" class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors sample-name" data-name="Chelsey">Chelsey</button>
+                                <button type="button" class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors sample-name" data-name="Dennis">Dennis</button>
+                            </div>
+                        </div>
+                    
+                        <div id="search-indicator" class="htmx-indicator flex justify-center py-4">
+                            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-500"></div>
+                        </div>
+                        <div id="search-results" class="mt-4">
+                        </div>
+                </div>
+            </div>
+            
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Performance Metrics</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="metrics" class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Posts Loaded:</span>
+                                <span id="post-count" class="text-sm text-gray-900 dark:text-white font-semibold">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Comments Loaded:</span>
+                                <span id="comment-count" class="text-sm text-gray-900 dark:text-white font-semibold">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Active HTMX Requests:</span>
+                                <span id="active-requests" class="text-sm text-gray-900 dark:text-white font-semibold">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Last Update:</span>
+                                <span id="last-update" class="text-sm text-gray-900 dark:text-white font-semibold">-</span>
+                            </div>
+                            <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <h5 class="text-sm font-medium text-gray-900 dark:text-white mb-3">Request Timings & Records</h5>
+                                <div id="timing-log" class="max-h-48 overflow-y-auto text-xs space-y-1">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Polling Control</h3>
+                    </div>
+                    <div class="p-6">
+                        <button id="toggle-polling" class="w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-md transition-colors">Pause Polling</button>
+                        <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">Current polling status: <span id="polling-status" class="text-green-600 dark:text-green-400 font-medium">Active (every 10s)</span></p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .htmx-indicator {
+        display: none;
+    }
+    .htmx-request .htmx-indicator {
+        display: block;
+    }
+    .htmx-request.htmx-indicator {
+        display: block;
+    }
+</style>
+
+<script>
+    let postCount = 0;
+    let commentCount = 0;
+    let activeRequests = 0;
+    let requestTimings = {};
+    let pollingEnabled = true;
+    
+    function logTiming(type, duration, details = '', recordsProcessed = null, commentsProcessed = null) {
+        const timingLog = document.getElementById('timing-log');
+        const entry = document.createElement('div');
+        entry.className = duration > 1000 ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-600 dark:text-gray-400';
+        
+        let recordInfo = '';
+        if (recordsProcessed !== null) {
+            recordInfo = ` [${recordsProcessed} records`;
+            if (commentsProcessed !== null && commentsProcessed > 0) {
+                recordInfo += `, ${commentsProcessed} comments`;
+            }
+            recordInfo += ']';
+        }
+        
+        entry.innerHTML = `<strong class="text-gray-900 dark:text-white">${new Date().toLocaleTimeString()}</strong> - ${type}: <span class="${duration > 1000 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'} font-semibold">${duration}ms</span>${recordInfo} ${details}`;
+        timingLog.insertBefore(entry, timingLog.firstChild);
+        
+        // Keep only last 20 entries
+        while (timingLog.children.length > 20) {
+            timingLog.removeChild(timingLog.lastChild);
+        }
+    }
+    
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        activeRequests++;
+        document.getElementById('active-requests').textContent = activeRequests;
+        
+        // Store request start time
+        const requestId = evt.detail.xhr.htmxRequestId = Date.now() + Math.random();
+        requestTimings[requestId] = {
+            startTime: Date.now(),
+            url: evt.detail.pathInfo.requestPath,
+            element: evt.target
+        };
+    });
+    
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        activeRequests--;
+        document.getElementById('active-requests').textContent = activeRequests;
+        document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+        
+        // Calculate request duration
+        const requestId = evt.detail.xhr.htmxRequestId;
+        if (requestTimings[requestId]) {
+            const duration = Date.now() - requestTimings[requestId].startTime;
+            const url = requestTimings[requestId].url;
+            const xhr = evt.detail.xhr;
+            
+            // Extract record processing information from response headers
+            const recordsProcessed = xhr.getResponseHeader('X-Records-Processed');
+            const commentsProcessed = xhr.getResponseHeader('X-Comments-Processed');
+            const pageNumber = xhr.getResponseHeader('X-Page-Number');
+            
+            let type = 'Unknown';
+            if (url.includes('/Post/LoadPosts')) {
+                type = 'Infinite Scroll';
+                if (commentsProcessed) {
+                    commentCount += parseInt(commentsProcessed);
+                    document.getElementById('comment-count').textContent = commentCount;
+                }
+            } else if (url.includes('/Home/NotificationCount')) {
+                type = 'Polling';
+            } else if (url.includes('/User/Search')) {
+                type = 'User Search';
+            } else if (url.includes('/Post/LoadComments')) {
+                type = 'Load Comments';
+                const commentsLoaded = xhr.getResponseHeader('X-Comments-Loaded');
+                const postId = xhr.getResponseHeader('X-Post-Id');
+                if (commentsLoaded && postId) {
+                    const totalCommentsElement = document.getElementById('comment-count');
+                    if (totalCommentsElement) {
+                        const currentTotal = parseInt(totalCommentsElement.textContent) || 0;
+                        totalCommentsElement.textContent = currentTotal + parseInt(commentsLoaded);
+                    }
+                }
+            }
+            
+            let details = `(${url})`;
+            if (pageNumber) {
+                details = `(page ${pageNumber})`;
+            } else if (url.includes('/Post/LoadComments')) {
+                const commentsLoaded = xhr.getResponseHeader('X-Comments-Loaded');
+                const postId = xhr.getResponseHeader('X-Post-Id');
+                if (commentsLoaded && postId) {
+                    details = `(Post ${postId}: ${commentsLoaded} comments)`;
+                }
+            }
+            
+            logTiming(type, duration, details, 
+                     recordsProcessed ? parseInt(recordsProcessed) : null, 
+                     commentsProcessed ? parseInt(commentsProcessed) : null);
+            delete requestTimings[requestId];
+        }
+    });
+    
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.target.id === 'post-container' || evt.target.closest('#post-container')) {
+            postCount = document.querySelectorAll('.post-card').length;
+            document.getElementById('post-count').textContent = postCount;
+        }
+    });
+    
+    // Polling control
+    document.getElementById('toggle-polling').addEventListener('click', function() {
+        pollingEnabled = !pollingEnabled;
+        const badge = document.getElementById('notification-badge');
+        const btn = document.getElementById('toggle-polling');
+        const status = document.getElementById('polling-status');
+        
+        if (pollingEnabled) {
+            badge.setAttribute('hx-get', '/Home/NotificationCount');
+            badge.setAttribute('hx-trigger', 'every 10s');
+            htmx.process(badge);
+            btn.textContent = 'Pause Polling';
+            btn.className = 'w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-md transition-colors';
+            status.textContent = 'Active (every 10s)';
+            status.className = 'text-green-600 dark:text-green-400 font-medium';
+        } else {
+            badge.removeAttribute('hx-get');
+            badge.removeAttribute('hx-trigger');
+            htmx.process(badge);
+            btn.textContent = 'Resume Polling';
+            btn.className = 'w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md transition-colors';
+            status.textContent = 'Paused';
+            status.className = 'text-red-600 dark:text-red-400 font-medium';
+        }
+    });
+    
+    // Sample name buttons functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('sample-name')) {
+            const searchInput = document.getElementById('user-search-input');
+            const sampleName = e.target.getAttribute('data-name');
+            searchInput.value = sampleName;
+            
+            // Trigger the search manually
+            htmx.trigger(searchInput, 'keyup');
+        }
+    });
+</script>
